@@ -1,0 +1,46 @@
+name: Check & deploy API documentation
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deploy-doc:
+    if: ${{ github.event_name == 'push' }}
+    name: Deploy API documentation on Bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy API documentation
+        uses: bump-sh/github-action@v1
+        with:
+          doc: 36feee90-4736-4462-b8fd-6285fbdf546d
+          token: ${{secrets.BUMP_TOKEN}}
+          file: asyncapi-failing-71b8404c-eef8-4248-91d0-7dd802c0ead0.yaml
+
+  api-diff:
+    if: ${{ github.event_name == 'pull_request' }}
+    name: Check API diff on Bump
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Comment pull request with API diff
+        uses: bump-sh/github-action@v1
+        with:
+          doc: 36feee90-4736-4462-b8fd-6285fbdf546d
+          token: ${{secrets.BUMP_TOKEN}}
+          file: asyncapi-failing-71b8404c-eef8-4248-91d0-7dd802c0ead0.yaml
+          command: diff
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
