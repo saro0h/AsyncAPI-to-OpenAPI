@@ -30,6 +30,13 @@ channels:
       operationId: receiveActiveAnnouncementsv2
       message:
         $ref: '#/components/messages/activeAnnouncementsUpdated'
+  /announcementsv3:
+    description: Information about active announcements version 3
+    subscribe:
+      summary: Receive updates about the set of active announcements v3
+      operationId: receiveActiveAnnouncementsv3
+      message:
+        $ref: '#/components/messages/activeAnnouncementsUpdated'
   /announcements:
     description: Information about active announcements
     subscribe:
