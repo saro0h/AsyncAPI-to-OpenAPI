@@ -24,7 +24,7 @@ jobs:
       - name: Deploy API documentation
         uses: bump-sh/github-action@v1
         with:
-          doc: 36feee90-4736-4462-b8fd-6285fbdf546d
+          doc: a0aced6d-4868-4958-9782-1a280e7f863e
           token: ${{secrets.BUMP_TOKEN}}
           file: asyncapi-failing-71b8404c-eef8-4248-91d0-7dd802c0ead0.yaml
 
@@ -38,7 +38,7 @@ jobs:
       - name: Comment pull request with API diff
         uses: bump-sh/github-action@v1
         with:
-          doc: 36feee90-4736-4462-b8fd-6285fbdf546d
+          doc: a0aced6d-4868-4958-9782-1a280e7f863e
           token: ${{secrets.BUMP_TOKEN}}
           file: asyncapi-failing-71b8404c-eef8-4248-91d0-7dd802c0ead0.yaml
           command: diff
