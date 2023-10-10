@@ -1,0 +1,169 @@
+asyncapi: 2.6.0
+info:
+  title: The Outuni Project WebSockets API
+  version: 1.0.0
+  description: >
+    This API allows you to get all the latest and greatest about our incursions
+    community.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+servers:
+  prod:
+    url: 42outunis.com
+    protocol: wss
+    description: Production broker
+  staging:
+    url: 42arnons.com
+    protocol: wss
+    description: Staging broker
+  dev:
+    url: localhost:7159
+    protocol: wss
+    description: Local development broker
+defaultContentType: application/json
+channels:
+  /announcementsv2:
+    description: Information about active announcements
+    subscribe:
+      summary: Receive updates about the set of active announcements
+      operationId: receiveActiveAnnouncementsv2
+      message:
+        $ref: '#/components/messages/activeAnnouncementsUpdated'
+  /announcementsv3:
+    description: Information about active announcements version 3
+    subscribe:
+      summary: Receive updates about the set of active announcements v3
+      operationId: receiveActiveAnnouncementsv3
+      message:
+        $ref: '#/components/messages/activeAnnouncementsUpdated'
+  /announcements:
+    description: Information about active announcements
+    subscribe:
+      summary: Receive updates about the set of active announcements
+      operationId: receiveActiveAnnouncements
+      message:
+        $ref: '#/components/messages/activeAnnouncementsUpdated'
+  /announcement/{announcementId}:
+    description: Information about a given announcement
+    parameters:
+      announcementId:
+        - $ref: '#/components/parameters/announcementId'
+    subscribe:
+      summary: Receive updates about updates to an announcement
+      operationId: receiveAnnouncement
+      message:
+        $ref: '#/components/messages/announcementUpdated'
+  /fleets:
+    description: Information about active fleets
+    subscribe:
+      summary: Receive updates about the set of active fleets
+      operationId: receiveActiveFleets
+      message:
+        $ref: '#/components/messages/activeAnnouncementsUpdated'
+components:
+  messages:
+    activeAnnouncementsUpdatedv2:
+      name: announcementsUpdated
+      title: Announcements Updated
+      summary: Inform about active announcements
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      payload:
+        $ref: '#/components/schemas/announcementPayload'
+    activeAnnouncementsUpdated:
+      name: announcementsUpdated
+      title: Announcements Updated
+      summary: Inform about active announcements
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      payload:
+        $ref: '#/components/schemas/announcementPayload'
+    announcementUpdated:
+      name: announcementsUpdated
+      title: Announcements Updated
+      summary: Inform about active announcements
+      traits:
+        - $ref: '#/components/messageTraits/commonHeaders'
+      payload:
+        $ref: '#/components/schemas/announcementPayload'
+  schemas:
+    Announcement:
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        type:
+          type: string
+          enum:
+            - Alert
+            - Normal
+        createdAt:
+          type: string
+          format: date-time
+        createdBy:
+          $ref: '#/components/schemas/User'
+        updatedAt:
+          type: string
+          format: date-time
+    Character:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: An EVE Character's unique ID
+        name:
+          type: string
+          description: The name of the EVE Character
+    announcementCreatedPayload:
+      type: object
+      properties:
+        announcementId:
+          $ref: '#/components/parameters/announcementId'
+    announcementPayload:
+      type: object
+      properties:
+        activeAnnouncements:
+          type: array
+          description: List of currently-active announcements
+          items:
+            type: integer
+            description: The ID of the announcement.
+        sentAt:
+          $ref: '#/components/schemas/sentAt'
+      required:
+        - eventType
+        - sentAt
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: User's account ID
+        mainCharacter:
+          $ref: '#/components/schemas/Character'
+    sentAt:
+      type: string
+      format: date-time
+      description: Date and time when the message was sent.
+  securitySchemes:
+    backendToken:
+      type: scramSha512
+      description: Provide your username and password for SASL/SCRAM authentication
+  parameters:
+    announcementId:
+      description: The ID of the announcement.
+      schema:
+        type: integer
+  messageTraits:
+    commonHeaders:
+      headers:
+        type: object
+        properties:
+          my-app-header:
+            type: integer
+            minimum: 0
+            maximum: 100
+
